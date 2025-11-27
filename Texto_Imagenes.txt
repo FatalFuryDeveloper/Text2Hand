@@ -1,0 +1,10 @@
+Estructura de Informe
+Portada: Debe incluir el título del informe, el nombre del autor(es), la fecha y la institución a la que pertenece.
+Índice: Un listado de las secciones y subsecciones con el número de página correspondiente para facilitar la navegación.
+Resumen: Una breve sinopsis que resume los objetivos, metodología, resultados y conclusiones principales del informe.
+Introducción: Presenta el tema, los objetivos, el contexto y la importancia del informe.
+Desarrollo: Es la sección principal que contiene la información detallada. Se divide en subsecciones como:
+Metodología: Describe los métodos utilizados para recopilar y analizar la información.
+Resultados: Presenta los datos obtenidos, a menudo con tablas y gráficos.
+Conclusiones: Sintetiza los resultados más importantes y ofrece una reflexión final.
+Bibliografía: Enumera todas las fuentes utilizadas en la investigación, como libros, artículos o páginas web. Probando esta mierda aqu  y asas
