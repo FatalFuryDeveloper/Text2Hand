@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editor de Imagen con CamanJS</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    #editorPanel {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 300px;
+      margin: 10px auto;
+      background: #f9f9f9;
+    }
+    input[type="range"] {
+      width: 200px;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Editor de Imagen con CamanJS</h2>
+  <input type="file" id="upload" accept="image/*">
+  <canvas id="canvas"></canvas>
+
+  <button id="togglePanel">🎨 Ajustes</button>
+
+  <div id="editorPanel">
+    <label>Brillo: <input type="range" id="brightness" min="-100" max="100" value="0"></label><br>
+    <label>Saturación: <input type="range" id="saturation" min="-100" max="100" value="0"></label><br>
+    <label>Nitidez: <input type="range" id="sharpen" min="0" max="100" value="0"></label><br>
+    <button id="applyFilters">Aplicar</button>
+    <button id="resetFilters">Reset</button>
+  </div>
+
+  <script src="https://unpkg.com/caman/dist/caman.full.min.js"></script>
+  <script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const panel = document.getElementById('editorPanel');
+    const toggleBtn = document.getElementById('togglePanel');
+
+    let camanInstance;
+
+    toggleBtn.addEventListener('click', () => {
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          camanInstance = Caman('#canvas', img.src);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('applyFilters').addEventListener('click', () => {
+      if (!camanInstance) return;
+      const brightness = parseInt(document.getElementById('brightness').value);
+      const saturation = parseInt(document.getElementById('saturation').value);
+      const sharpen = parseInt(document.getElementById('sharpen').value);
+
+      camanInstance.revert(false);
+      camanInstance.brightness(brightness);
+      camanInstance.saturation(saturation);
+      camanInstance.sharpen(sharpen);
+      camanInstance.render();
+    });
+
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      if (!camanInstance) return;
+      camanInstance.revert(true);
+    });
+  </script>
+</body>
+</html>

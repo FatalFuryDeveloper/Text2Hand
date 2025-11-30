@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editor Avanzado con Estilo Mejorado</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #editorPanel {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 700px;
+      margin: 10px auto;
+      background: #f9f9f9;
+    }
+    .slider-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0;
+      gap: 10px;
+    }
+    .slider-group span.label {
+      width: 120px;
+      text-align: left;
+      font-weight: bold;
+    }
+    .slider-group span.value {
+      width: 40px;
+      text-align: center;
+    }
+    .slider-group input[type="range"] {
+      flex-grow: 1;
+    }
+    .slider-group span.minmax {
+      width: 40px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Editor Avanzado con Vista Previa y Estilo Mejorado</h2>
+  <input type="file" id="upload" accept="image/*">
+  <canvas id="canvas"></canvas>
+
+  <button id="slider">3a8 Ajustes</button>
+
+  <div id="editorPanel">
+    <div id="sliders"></div>
+    <button id="resetFilters">Reset</button>
+  </div>
+
+  <script src="https://unpkg.com/caman/dist/caman.full.min.js"></script>
+  <script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const panel = document.getElementById('editorPanel');
+    const toggleBtn = document.getElementById('slider');
+    const slidersContainer = document.getElementById('sliders');
+
+    let camanInstance;
+    let originalImageSrc;
+
+    const filters = [
+      { name: 'brightness', min: -100, max: 100, value: 0 },
+      { name: 'contrast', min: -100, max: 100, value: 0 },
+      { name: 'saturation', min: -100, max: 100, value: 0 },
+      { name: 'exposure', min: -100, max: 100, value: 0 },
+      { name: 'sepia', min: 0, max: 100, value: 0 },
+      { name: 'noise', min: 0, max: 100, value: 0 },
+      { name: 'sharpen', min: 0, max: 100, value: 0 },
+      { name: 'vibrance', min: -100, max: 100, value: 0 },
+      { name: 'hue', min: 0, max: 100, value: 0 },
+      { name: 'gamma', min: 0, max: 10, value: 0 },
+      { name: 'clip', min: 0, max: 100, value: 0 },
+      { name: 'stackBlur', min: 0, max: 20, value: 0 }
+    ];
+
+    toggleBtn.addEventListener('click', () => {
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        originalImageSrc = event.target.result;
+        const img = new Image();
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          camanInstance = Caman('#canvas', originalImageSrc);
+        };
+        img.src = originalImageSrc;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    filters.forEach(filter => {
+      const group = document.createElement('div');
+      group.className = 'slider-group';
+
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.innerText = filter.name;
+
+      const valueDisplay = document.createElement('span');
+      valueDisplay.className = 'value';
+      valueDisplay.id = `${filter.name}-value`;
+      valueDisplay.innerText = filter.value;
+
+      const minLabel = document.createElement('span');
+      minLabel.className = 'minmax';
+      minLabel.innerText = filter.min;
+
+      const maxLabel = document.createElement('span');
+      maxLabel.className = 'minmax';
+      maxLabel.innerText = filter.max;
+
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.id = filter.name;
+      input.min = filter.min;
+      input.max = filter.max;
+      input.value = filter.value;
+      input.addEventListener('input', () => {
+        valueDisplay.innerText = input.value;
+        applyFiltersLive();
+      });
+
+      group.appendChild(label);
+      group.appendChild(valueDisplay);
+      group.appendChild(minLabel);
+      group.appendChild(input);
+      group.appendChild(maxLabel);
+      slidersContainer.appendChild(group);
+    });
+
+    function applyFiltersLive() {
+      if (!camanInstance) return;
+      camanInstance.revert(false);
+      filters.forEach(filter => {
+        const value = parseFloat(document.getElementById(filter.name).value);
+        if (value !== 0) {
+          camanInstance[filter.name](value);
+        }
+      });
+      camanInstance.render();
+    }
+
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      if (!camanInstance) return;
+      camanInstance.revert(true);
+      filters.forEach(filter => {
+        const input = document.getElementById(filter.name);
+        input.value = filter.value;
+        document.getElementById(`${filter.name}-value`).innerText = filter.value;
+      });
+    });
+  </script>
+</body>
+</html>

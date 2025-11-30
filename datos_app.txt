@@ -1,0 +1,84 @@
+/********************************************************************************/
+/*								   GITHUB									    */
+/********************************************************************************/
+git add .
+git commit -m "MRI–27/11/2025–feat: Update Imagenes new Text2Hand"
+git push origin main
+
+/********************************************************************************/
+/*								   ADS									    */
+/********************************************************************************/
+sdk:			ca-app-pub-9253302331124333/3264246176
+banner:			ca-app-pub-9253302331124333/1376449430
+interstitial:	ca-app-pub-9253302331124333/6437204422
+
+
+https://fatalfurydeveloper.github.io/Text2Hand/privacy_policy.html
+adb connect IP_DEL_MOVIL:5555
+adb logcat | find "AndroidRuntime"
+
+cordova create T2H com.ejemplo.tdh T2H
+cd T2H1
+
+cordova plugin add cordova-plugin-android-permissions
+cordova plugin add cordova-plugin-file
+cordova plugin add cordova-plugin-file-opener2
+cordova plugin add cordova-plugin-network-information
+
+
+
+cordova plugin add emi-indo-cordova-plugin-admob --save --variable APP_ID_ANDROID=ca-app-pub-3940256099942544~3347511713
+
+/********************************************************************************/
+/*								   ANDROID											*/
+/********************************************************************************/
+cordova platform add android
+cordova platform rm android
+
+cordova build android
+cordova build android --release --buildConfig=build.json
+
+cordova-res android --skip-config --copy
+
+/********************************************************************************/
+/*									IOS											*/
+/********************************************************************************/
+cordova-res ios --skip-config --cop
+cordova platform add ios
+cordova build ios
+chrome://inspect/#devices
+
+rar a -r -xr!node_modules -xr!platforms -xr!plugins -x*.log MiArchivo.rar MiCarpeta\
+-xr!node_modules -xr!platforms -xr!plugins
+-xnode_modules -xplatforms -xplugins
+
+
+## ✅ **4. Firmar el APK**
+1. **Crear un keystore** (si no tienes uno):
+   ```bash
+   keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+   ```
+2. **Firmar el APK**:
+   ```bash
+   jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 -keystore my-release-key.keystore platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk my-key-alias
+   ```
+3. **Optimizar con zipalign**:
+   ```bash
+   zipalign -v 4 platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk T2H-release.apk
+   ```
+
+---
+
+## ✅ **5. Verificar firma**
+```bash
+apksigner verify T2H-release.apk
+```
+
+---
+
+## ✅ **6. Checklist para Play Store**
+- **Target SDK**: 35 (ya lo tienes).
+- **Adaptive Icon**: listo con el hook.
+- **Permisos**: revisa `config.xml` y elimina los que no uses.
+- **Política de seguridad**: `android-usesCleartextTraffic="false"` ✅.
+- **Firma**: usa el mismo keystore para futuras actualizaciones.

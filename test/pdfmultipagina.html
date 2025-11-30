@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Titulo de la Pagina -->
+    <title>Convertidor de Texto a Mano | Text to Handwriting Converter</title>
+	
+	<!-- Icono de la Pagina -->
+	<link rel="icon" href="/resources/img/logo.png" sizes="192x192" type=" content="Convierte texto a escritura a mano y descárgalo como imagen o PDF. Soporte multipágina. | Convert text to handwriting and download as image or PDF. Multipage supported.">
+
+	<!-- Metas -->
+	<!-- Charset y viewport -->
+	<meta name="codification" charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes">
+	
+	<meta name="description" content="Text to Handwriting Converter and downloading them as image or PDF. Multipage is also supported. If you have a long text and want to convert multiple pages into handwriting and download it as a single PDF file, it is also available." />
+    <meta name="author" content="Mauro Rivera" />
+    <meta name="keywords" content="Convertidor texto a mano, Text to Handwriting, PDF, imagen, multipágina, Text to PDF, Text to image, ">
+	
+	<!-- Idioma -->
+    <meta name="language" http-equiv="Content-Language" content="es,en">
+
+	<!-- Cache -->
+    <meta name="storage" http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta name="pragma" http-equiv="Pragma" content="no-cache" />
+    <meta name="expires" http-equiv="Expires" content="0">
+	
+	 <!-- Open Graph (para redes sociales) -->
+    <meta property="og:title" content="Convertidor de Texto a Mano">
+    <meta property="og:description" content="Convierte texto a escritura a mano y descárgalo como imagen o PDF. Soporte multipágina.">
+    <meta property="og:image" content="/resources/img/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Convertidor de Texto a Mano">
+    <meta name="twitter:description" content="Convierte texto a escritura a mano y descárgalo como imagen o PDF.">
+    <meta name="twitter:image" content="/resources/img/logo.png">
+	
+</head>
+<body>
+<style>
+
+    #document-container {
+        width: 800px;
+        height: 1123px; /* A4 height approx */
+        margin: auto;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+	
+    .page {
+        width: 100%;
+        height: 1123px;
+        padding: 40px;
+        background: url('resources/img/paper/paper-square.jpg') no-repeat center center;
+        background-size: cover;
+        box-sizing: border-box;
+    }
+	
+    .btn-download {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 15px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+	
+    .paginador {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+	
+    .paginador button {
+        padding: 8px 12px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+	
+    .paginador span {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div id="document-container">
+					
+</div>
+
+<div class="paginador">
+    <button onclick="prevPage()">‹ Prev</button>
+    <span id="pageIndicator">1 / 1</span>
+    <button onclick="nextPage()">Next ›</button>
+</div>
+
+<button class="btn-download" onclick="descargarPDF()">Descargar PDF</button>
+
+<script>
+let currentPage = 1;
+let totalPages = 1;
+
+function generarContenido() {
+    const container = document.getElementById('document-container');
+    const texto = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus...";
+    const totalParrafos = 50;
+    const parrafosPorPagina = 15;
+
+    for (let i = 0; i < totalParrafos; i++) {
+        if (i % parrafosPorPagina === 0) {
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'page';
+            container.appendChild(pageDiv);
+        }
+        const p = document.createElement('p');
+        p.textContent = `${texto} [${i + 1}]`;
+        container.lastChild.appendChild(p);
+    }
+
+    totalPages = container.querySelectorAll('.page').length;
+    updatePageIndicator();
+}
+
+function updatePageIndicator() {
+    document.getElementById('pageIndicator').textContent = `${currentPage} / ${totalPages}`;
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        scrollToPage(currentPage);
+    }
+}
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        currentPage++;
+        scrollToPage(currentPage);
+    }
+}
+
+function scrollToPage(page) {
+    const container = document.getElementById('document-container');
+    const pageHeight = container.querySelector('.page').offsetHeight;
+    container.scrollTo({ top: (page - 1) * pageHeight, behavior: 'smooth' });
+    updatePageIndicator();
+}
+
+function descargarPDF() {
+    const elemento = document.getElementById('document-container');
+    const opciones = {
+        margin: 10,
+        filename: 'documento.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opciones).from(elemento).save();
+}
+
+// Inicializa contenido dinámico
+generarContenido();
+</script>
+	<script type="text/javascript" src="resources/libs/externos/html2pdf/html2pdf.bundle.min.js"></script>
+</body>
+</html>

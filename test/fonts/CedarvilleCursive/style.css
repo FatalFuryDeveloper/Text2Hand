@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Cedarville Cursive';
+  font-weight: 400;
+  font-style: normal;
+  src: url(CedarvilleCursive-Regular.ttf) format('truetype');
+  font-display: swap;
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QuillJS Page Break Example</title>
+<link rel="stylesheet" href="/resources/css/quill.snow.css" />
+
+	<script type="text/javascript" src="resources/libs/externos/quill/quill.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/html2pdf/html2pdf.bundle.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/jspdf/jspdf.umd.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/html2canvas/html2canvas.js"></script>
+	<style>
+	
+@page {
+  size: A4;
+  margin: 0;
+  background: url('resources/img/paper/paper-square.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+	</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <button id="downloadPdf">Download PDF</button>
+</div>
+<div id="editor-container"></div>
+<script>
+  // Inicializar Quill
+  const quill = new Quill('#editor-container', {
+    theme: 'snow',
+    modules: {
+      toolbar: [['bold', 'italic'], ['link']]
+    }
+  });
+
+
+  // Descargar PDF con saltos
+  document.getElementById('downloadPdf').addEventListener('click', () => {
+    const element = document.querySelector('.ql-editor');
+    const opt = {
+      margin: 10,
+      filename: 'document.pdf',
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+	
+	/*
+html2pdf().set(opt).from(element).toPdf().get('pdf').then(pdf => {
+  const totalPages = pdf.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    pdf.setPage(i);
+    pdf.addImage('resources/img/paper/paper-square.jpg', 'PNG', 0, 0, 794, 1123); // tamaño A4 en mm
+  }
+}).save();
+*/
+  });
+  
+  
+</script>
+
+</body>
+</html>
+``

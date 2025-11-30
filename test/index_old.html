@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+	<!-- Titulo de la Pagina -->
+    <title>Convertidor de Texto a Mano</title>
+	
+	<!-- Icono de la Pagina -->
+	<link rel="icon" sizes="192x192" href="/resources/img/logo.png" />
+
+	<!-- Metas -->
+    <meta name="codification" charSet="UTF-8" />
+	<meta name="description" content="Text to Handwriting Converter and downloading them as image or PDF. Multipage is also supported. If you have a long text and want to convert multiple pages into handwriting and download it as a single PDF file, it is also available." />
+    <meta name="author" content="Mauro Rivera" />
+    <meta name="keywords" content="Text2Hand" />
+	<meta name="storage" http-equiv="Cache-control" content="no-cache, no-store" />
+	<meta name="pragma" http-equiv="Pragma" content="no-cache" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes">
+	<!-- Hojas de Estilos CSS -->
+	<link rel="stylesheet" href="/resources/css/nano.min.css"/>
+	<link rel="stylesheet" href="/resources/css/style.css" />
+	<link rel="stylesheet" href="/resources/css/css_format_text.css" />
+	<link rel="stylesheet" href="/resources/css/select2.css" />
+	<link rel="stylesheet" href="/resources/css/quill.snow.css" />
+	<!-- Javascript Header / Al final del documento se cargan mas -->
+	<script type="text/javascript" src="resources/libs/externos/jquery/jquery.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/quill/highlight.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/quill/quill.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/select2/select2.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/pickr/pickr.min.js"></script>
+</head>
+<body>
+<!-- Barra Header o Titulo -->
+	<header id="headerTitle" class="headerTitle">
+		<div class="headerTitleContainer">
+			<img src="/resources/img/Logo2.png" alt="Text2Hand" width="200"/>
+			<div class="headerMenu">
+				<i class="bx bx-menu-alt-right"></i>
+				<div class="tablet-hidden">Menu</div>
+			</div>
+		</div>
+    </header>
+	 <!-- Inicializacion del Modulo y Controlador del Sitio -->
+	<div id="container-main" class="container" data-ng-app="sri" data-ng-controller="InicioControlador as inicioCtrl" data-ng-init="inicioCtrl.init()">
+		<!-- Buttons Text-->
+		<div class="buttonsText">
+			<div class="buttonsTextContainer selection">
+				<button id="btnTextArea" type="button" class="type" data-ng-model="inicioCtrl.btnTextArea" data-ng-click="inicioCtrl.mostrarTextArea()">
+					<i class="bx bx-edit"></i>Text Area
+				</button>
+				<button id="btnTextEditor" type="button" class="type" data-ng-model="inicioCtrl.btnTextEditor" data-ng-click="inicioCtrl.mostrarTextEditor()">
+					<i class="bx bx-text"></i>Text Editor
+				</button>
+				<div id= "divArea" class="choice leftButton"></div>
+			</div>
+		</div>
+		<!-- Text Editor-->
+		<div id="containerTextEditor" class="containerTextEditor" data-ng-show="inicioCtrl.containerTextEditor">
+			
+			<div id="toolbar-container" style="background: #ffffff;" >
+				<span class="ql-formats">
+					<select class="ql-size">
+					  <option value="8px">8</option>
+					  <option value="10px">10</option>
+					  <option value="12px">12</option>
+					  <option value="14px" selected>14</option>
+					  <option value="16px">16</option>
+					  <option value="18px">18</option>
+					  <option value="20px">20</option>
+					  <option value="22px">22</option>
+					  <option value="24px">24</option>
+					</select>
+					<button class="ql-bold"></button>
+					<button class="ql-italic"></button>
+					<button class="ql-underline"></button>
+					<select class="ql-color"></select>
+					<select class="ql-align"></select>
+					<button class="ql-list" value="ordered"></button>
+					<button class="ql-list" value="bullet"></button>
+					<button class="ql-indent" value="-1"></button>
+					<button class="ql-indent" value="+1"></button>
+					<button class="ql-script" value="sub"></button>
+					<button class="ql-script" value="super"></button>
+					<button class="ql-clean"></button>
+					<button class="bx bx-x-circle" id="clear-editor"></button>
+				</span>
+			</div>
+			<div id="editorText" style="position:relative;width:100%;height:200px;border-radius:8px;background:#ffffff;border:1px solid#e1e1ef;-webkit-transition:0.25s;transition:0.25s;outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;">
+			</div>
+		</div>
+		<!-- Area Text-->
+		<div id="containerTextArea" class="containerTextArea" data-ng-show="inicioCtrl.containerTextArea">
+			<div id="editorArea" style="position:relative;width:100%;height:200px;border-radius:8px;background:#ffffff;border:1px solid#e1e1ef;-webkit-transition:0.25s;transition:0.25s;outline: none; user-select: text; white-space: pre-wrap; overflow-wrap: break-word;" data-ng-model="inicioCtrl.editorArea"  data-ng-change="inicioCtrl.convertirTextEditor()">
+			</div>
+		</div>
+		<!-- Options-->
+		<div class="leLlSp">
+			<div class=" kHMJen">
+			<!-- Options Fonts Family-->
+				<div class="jFCCmm">
+					<div class="ciYtQM filled">
+						<div class="css-b62m3t-container">
+							<div class=" css-12buo25-control">
+								<div class=" css-1mkcnw2">
+									<div class=" css-1vurhgc-singleValue">
+										<select id="selectFonts">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<label for="font" class="labelText">Font Family</label>
+					</div>
+				</div>
+				<!-- Options Fonts Size-->
+				<div class="bnKHBq">
+					<div class="ciYtQM filled">
+						<div class="css-b62m3t-container">
+							<div class="css-12buo25-control">
+								<div class=" css-1mkcnw2">
+									<div class="css-1vurhgc-singleValue">
+										<select id="selectSize">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<label for="font" class="labelText">Font Size</label>
+					</div>
+				</div>
+				<!-- Options Ink Color-->
+				<div class="fMdSd">
+					<div class="ciYtQM filled">
+						<div class="css-b62m3t-container">
+							<div class=" css-12buo25-control">
+								<div class=" css-1mkcnw2">
+									<div class=" css-1vurhgc-singleValue">
+										<select id="selectInk">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<label for="font" class="labelText">Ink Color</label>
+					</div>
+				</div>
+				<!-- Options Ink Color Selector-->
+				<div class="fMdSd" data-ng-show="inicioCtrl.containerCustomColor">
+					<div class="ciYtQM filled">
+						<div class="css-b62m3t-container">
+							<div class=" css-12buo25-control">
+								<div class=" css-1mkcnw2">
+									<div class=" css-1vurhgc-singleValue">
+										<div id="color-picker" class="color-picker"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<label for="font" class="labelText">Custom Ink Color</label>
+					</div>
+				</div>
+				<!-- Options Paper Typer-->
+				<div class="gtHCSg">
+					<div class="ciYtQM filled">
+						<div class="css-b62m3t-container">
+							<div class=" css-12buo25-control">
+								<div class=" css-1mkcnw2">
+									<div class=" css-1vurhgc-singleValue">
+										<select id="selectPaper">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<label for="font" class="labelText">Paper Typer</label>
+					</div>
+				</div>
+				<!-- Options File Upload-->
+				<div class="file-upload" role="presentation" tabindex="0" data-ng-show="inicioCtrl.containerCustomPaper">
+					<input accept="image/jpeg,.jpg,.jpeg,image/png,.png,image/svg+xml,.svg,image/webp,.webp,image/avif,.avif" type="file" tabindex="-1" id="file-upload" style="display: none;">
+					<div class="dropzone">
+						<i class="bx bx-upload"></i>
+						<div class="text">
+							<span>Drag your image here, or click to <strong>browse</strong></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Adviser-->
+		<div class="ad-wrapper"></div>
+		<!-- Result-->
+		<div class="dAbSai">
+			<div  id="result-wrapper" class="result-wrapper">
+				<div class="paper">
+					<div>
+						<img id="imagePaperTest" width="100%" height="100%" alt="" src="/resources/img/paper/paper-square.jpg" />
+					</div>
+				</div>
+				<div class="text-wrapper" dir="ltr">
+					<div id="resultText" data-ng-model="inicioCtrl.resultText" class="textoResultado ql-editor">Este texto es de prueba para verificar el correcto funcionamieto de la herramienta, estare haciendo modificaciones io u metiendo codigo a lo loco</div>
+				</div>
+			</div>
+			<!-- Buttons Export-->
+			<br/>
+			<div class="bbLVwL">
+				<button type="button" id="btnDownloadImage" data-ng-model="inicioCtrl.btnDownloadImage" data-ng-click="inicioCtrl.descargarPDF()" class="jDMTOD primary disabled">
+					<div id="select-option-button" class="select-button-content">
+						<div class="select-button-text">Download Image</div>
+						<i class="bx bx-image"></i>
+					</div>
+				</button>
+				<button type="button" id="btnDownloadPDF" data-ng-model="inicioCtrl.btnDownloadPDF" data-ng-click="inicioCtrl.descargarPDF()" class="jDMTOD primary">
+					<div id="select-option-button" class="select-button-content">
+						<div class="select-button-text">Download PDF</div>
+						<i class="bx bx-file"></i>
+					</div>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Los scripts van al final del body para que no bloqueen la carga de la pagina -->
+	<script type="text/javascript" src="resources/libs/externos/angular/angular.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/angular-ui-router/angular-ui-router.min.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/angular-utils-ui-breadcrumbs/uiBreadcrumbs.js"></script>
+	<script type="text/javascript" src="resources/libs/externos/html2pdf/html2pdf.bundle.min.js"></script>
+
+	<!-- Script del Sistema -->
+	<script type="text/javascript" src="resources/js/modulo.js"></script>
+	<script type="text/javascript" src="resources/js/InicioControlador.js"></script>
+</body>
+</html>

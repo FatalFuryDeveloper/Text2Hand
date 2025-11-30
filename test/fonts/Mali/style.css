@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Mali';
+  font-weight: 400;
+  font-style: normal;
+  src: url(Mali-Regular.ttf) format('truetype');
+  font-display: swap;
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Template</title>
+<!-- One of the following themes -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css"/> <!-- 'nano' theme -->
+
+	<!-- Modern or es5 bundle -->
+	<script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+  </head>
+  <body>
+	<div id="color-picker"></div>
+	<script>
+		const pickr = Pickr.create({
+			el: '#color-picker',
+			theme: 'nano',
+			default: '#9c2f2f',
+			components: {
+				preview: true,
+				opacity: true,
+				hue: true,
+				interaction: {
+					hex: true,
+					input: true,
+					save: true
+				}
+			}
+		});
+		pickr.on('save', (color) => {
+			console.log('Color seleccionado:', color.toHEXA().toString());
+		});
+	</script>
+  </body>
+</html>

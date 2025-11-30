@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Pangolin';
+  font-weight: 400;
+  font-style: normal;
+  src: url(Pangolin-Regular.ttf) format('truetype');
+  font-display: swap;
+}

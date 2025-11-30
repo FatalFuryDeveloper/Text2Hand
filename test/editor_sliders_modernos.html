@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editor de Imagen con Sliders Modernos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+      background: #f4f4f4;
+    }
+    #editorPanel {
+      border: 1px solid #ccc;
+      padding: 20px;
+      width: 750px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .slider-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 12px 0;
+      gap: 10px;
+    }
+    .slider-group span.label {
+      width: 120px;
+      font-weight: bold;
+      text-align: left;
+    }
+    .slider-group span.value {
+      width: 40px;
+      text-align: center;
+    }
+    .slider-group input[type="range"] {
+      flex-grow: 1;
+      accent-color: #007bff;
+    }
+    .slider-group span.minmax {
+      width: 40px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+    }
+    .btn-minus, .btn-plus {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 30px;
+    }
+    .btn-minus:hover, .btn-plus:hover {
+      background: #0056b3;
+    }
+    #resetFilters {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #resetFilters:hover {
+      background: #a71d2a;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Editor de Imagen con Sliders Modernos</h2>
+  <img id="imagePaperTest" src="image.png" style="display:none;" />
+  <canvas id="canvas"></canvas>
+
+  <div id="editorPanel">
+    <div id="sliders"></div>
+    <button id="resetFilters">Reset</button>
+  </div>
+
+  <script src="https://unpkg.com/caman/dist/caman.full.min.js"></script>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const image = document.getElementById('imagePaperTest');
+    const slidersContainer = document.getElementById('sliders');
+
+    let camanInstance;
+
+    const filters = [
+      { name: 'brightness', min: -100, max: 100, value: 0 },
+      { name: 'contrast', min: -100, max: 100, value: 0 },
+      { name: 'saturation', min: -100, max: 100, value: 0 },
+      { name: 'exposure', min: -100, max: 100, value: 0 },
+      { name: 'sepia', min: 0, max: 100, value: 0 },
+      { name: 'noise', min: 0, max: 100, value: 0 },
+      { name: 'sharpen', min: 0, max: 100, value: 0 },
+      { name: 'vibrance', min: -100, max: 100, value: 0 },
+      { name: 'hue', min: 0, max: 100, value: 0 },
+      { name: 'gamma', min: 0, max: 10, value: 0 },
+      { name: 'clip', min: 0, max: 100, value: 0 },
+      { name: 'stackBlur', min: 0, max: 20, value: 0 }
+    ];
+
+    window.onload = () => {
+      const img = new Image();
+      img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        camanInstance = Caman('#canvas', img.src);
+      };
+      img.src = image.src;
+    };
+
+    filters.forEach(filter => {
+      const group = document.createElement('div');
+      group.className = 'slider-group';
+
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.innerText = filter.name;
+
+      const valueDisplay = document.createElement('span');
+      valueDisplay.className = 'value';
+      valueDisplay.id = `${filter.name}-value`;
+      valueDisplay.innerText = filter.value;
+
+      const minLabel = document.createElement('span');
+      minLabel.className = 'minmax';
+      minLabel.innerText = filter.min;
+
+      const maxLabel = document.createElement('span');
+      maxLabel.className = 'minmax';
+      maxLabel.innerText = filter.max;
+
+      const input = document.createElement('input');
+      input.type = 'range';
+      input.id = filter.name;
+      input.min = filter.min;
+      input.max = filter.max;
+      input.value = filter.value;
+      input.addEventListener('input', () => {
+        valueDisplay.innerText = input.value;
+        applyFiltersLive();
+      });
+
+      const btnMinus = document.createElement('button');
+      btnMinus.className = 'btn-minus';
+      btnMinus.innerText = '-';
+      btnMinus.addEventListener('click', () => {
+        input.value = Math.max(input.min, parseInt(input.value) - 1);
+        valueDisplay.innerText = input.value;
+        applyFiltersLive();
+      });
+
+      const btnPlus = document.createElement('button');
+      btnPlus.className = 'btn-plus';
+      btnPlus.innerText = '+';
+      btnPlus.addEventListener('click', () => {
+        input.value = Math.min(input.max, parseInt(input.value) + 1);
+        valueDisplay.innerText = input.value;
+        applyFiltersLive();
+      });
+
+      group.appendChild(label);
+      group.appendChild(btnMinus);
+      group.appendChild(input);
+      group.appendChild(btnPlus);
+      group.appendChild(valueDisplay);
+      group.appendChild(minLabel);
+      group.appendChild(maxLabel);
+      slidersContainer.appendChild(group);
+    });
+
+    function applyFiltersLive() {
+      if (!camanInstance) return;
+      camanInstance.revert(false);
+      filters.forEach(filter => {
+        const value = parseFloat(document.getElementById(filter.name).value);
+        if (value !== 0) {
+          camanInstance[filter.name](value);
+        }
+      });
+      camanInstance.render();
+    }
+
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      if (!camanInstance) return;
+      camanInstance.revert(true);
+      filters.forEach(filter => {
+        const input = document.getElementById(filter.name);
+        input.value = filter.value;
+        document.getElementById(`${filter.name}-value`).innerText = filter.value;
+      });
+    });
+  </script>
+</body>
+</html>
